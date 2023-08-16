@@ -1,0 +1,78 @@
+name: build-drawterm
+on:
+  schedule:
+  - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  Build-Windows:
+    runs-on: windows-latest
+    steps:
+      - run: git config --global core.autocrlf input
+      - name: Set up Cygwin
+        uses: cygwin/cygwin-install-action@master
+        with:
+          packages: mingw64-i686-gcc-core mingw64-x86_64-gcc-core make
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          repository: '9front/drawterm'
+      - name: Build i686
+        env:
+          CONF: win32
+        run: |
+          cd ${{ github.workspace }}
+          make
+          copy drawterm.exe drawterm-i686.exe
+          make clean
+      - name: Build amd64
+        env:
+          CONF: win64
+        run: |
+          cd ${{ github.workspace }}
+          make
+          copy drawterm.exe drawterm-amd64.exe
+          make clean
+      - name: Upload i686
+        uses: actions/upload-artifact@v3
+        with:
+          name: drawterm-i686.exe
+          path: ${{ github.workspace }}/drawterm-i686.exe
+      - name: Upload amd64
+        uses: actions/upload-artifact@v3
+        with:
+          name: drawterm-amd64.exe
+          path: ${{ github.workspace }}/drawterm-amd64.exe
+  Build-Mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          repository: '9front/drawterm'
+      - name: Build amd64
+        env:
+          CONF: osx-cocoa
+        run: |
+          cd ${{ github.workspace }}
+          make
+          mv drawterm intel_bin
+      - name: Build arm64
+        env:
+          CONF: osx-cocoa
+        run: |
+          cd ${{ github.workspace }}
+          make clean
+          sed -EI '' 's/^CFLAGS=/CFLAGS=--target=arm64-apple-darwin /g' Make.osx-cocoa
+          sed -EI '' 's/^LDADD=/LDADD=--target=arm64-apple-darwin /g' Make.osx-cocoa
+          sed -EI '' 's/arch=.*;/arch=arm64;/g' Make.osx-cocoa
+          make
+          mv drawterm arm_bin
+          lipo -create -output drawterm intel_bin arm_bin
+          chmod +x drawterm
+          mv drawterm gui-cocoa/drawterm.app/
+      - name: Upload app
+        uses: actions/upload-artifact@v3
+        with:
+          name: drawterm.app
+          path: ${{ github.workspace }}/gui-cocoa/drawterm.app
