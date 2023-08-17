@@ -10,8 +10,10 @@ jobs:
     steps:
       - name: sync
         run: |
-          git clone git://git.9front.org/plan9front/drawterm
+          git clone https://github.com/9front/drawterm.git
           cd drawterm
+          git remote add up git://git.9front.org/plan9front/drawterm
+          git pull up front
           git remote add gh https://majiru:${{ secrets.PUSH_CREDS }}@github.com/9front/drawterm.git
           git push -u gh
   sync-9front:
@@ -19,7 +21,9 @@ jobs:
     steps:
       - name: sync
         run: |
-          git clone git://git.9front.org/plan9front/plan9front
-          cd plan9front
+          git clone https://github.com/9front/9front.git
+          cd 9front
+          git remote add up git://git.9front.org/plan9front/plan9front
+          git pull up front
           git remote add gh https://majiru:${{ secrets.PUSH_CREDS }}@github.com/9front/9front.git
           git push -u gh
