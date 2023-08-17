@@ -14,3 +14,12 @@ jobs:
           cd drawterm
           git remote add gh https://majiru:${{ secrets.PUSH_CREDS }}@github.com/9front/drawterm.git
           git push -u gh
+  sync-9front:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sync
+        run: |
+          git clone git://git.9front.org/plan9front/plan9front
+          cd plan9front
+          git remote add gh https://majiru:${{ secrets.PUSH_CREDS }}@github.com/9front/9front.git
+          git push -u gh
