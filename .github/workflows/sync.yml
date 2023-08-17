@@ -1,0 +1,16 @@
+name: sync
+on:
+  schedule:
+  - cron: '22 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync-drawterm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sync
+        run: |
+          git clone git://git.9front.org/plan9front/drawterm
+          cd drawterm
+          git remote add gh https://majiru:${{ secrets.PUSH_CREDS }}@github.com/9front/drawterm.git
+          git push -u gh
