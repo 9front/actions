@@ -71,9 +71,10 @@ jobs:
           lipo -create -output drawterm intel_bin arm_bin
           chmod +x drawterm
           mv drawterm gui-cocoa/drawterm.app/
-          zip -r gui-cocoa/drawterm.app.zip gui-cocoa/drawterm.app
+          cd gui-cocoa
+          tar cf drawterm.app.tar drawterm.app
       - name: Upload app
         uses: actions/upload-artifact@v3
         with:
           name: drawterm.app
-          path: ${{ github.workspace }}/gui-cocoa/drawterm.app.zip
+          path: ${{ github.workspace }}/gui-cocoa/drawterm.app.tar
