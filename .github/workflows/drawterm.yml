@@ -55,6 +55,8 @@ jobs:
           CONF: osx-cocoa
         run: |
           cd ${{ github.workspace }}
+          sed -EI '' 's/^CFLAGS=/CFLAGS=--target=x86_64-apple-darwin /g' Make.osx-cocoa
+          sed -EI '' 's/^LDADD=/LDADD=--target=x86_64-apple-darwin /g' Make.osx-cocoa
           make
           mv drawterm intel_bin
       - name: Build arm64
@@ -63,8 +65,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           make clean
-          sed -EI '' 's/^CFLAGS=/CFLAGS=--target=arm64-apple-darwin /g' Make.osx-cocoa
-          sed -EI '' 's/^LDADD=/LDADD=--target=arm64-apple-darwin /g' Make.osx-cocoa
+          sed -EI '' 's/x86_64-apple-darwin/arm64-apple-darwin/g' Make.osx-cocoa
           sed -EI '' 's/arch=.*;/arch=arm64;/g' Make.osx-cocoa
           make
           mv drawterm arm_bin
