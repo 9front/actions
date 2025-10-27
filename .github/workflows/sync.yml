@@ -23,7 +23,7 @@ jobs:
         run: |
           git clone https://github.com/9front/9front.git
           cd 9front
-          git remote add up git://git.9front.org/plan9front/plan9front
+          git remote add up git://git.9front.org/plan9front/9front
           git pull up front
           git remote add gh https://majiru:${{ secrets.PUSH_CREDS }}@github.com/9front/9front.git
           git push -u gh
