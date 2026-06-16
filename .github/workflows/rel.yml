@@ -1,0 +1,18 @@
+name: release-to-latest
+on:
+  schedule:
+  - cron: '21 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  to-nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: upgrade
+        run: |
+          git clone https://github.com/majiru/9front-in-a-box.git 9flake
+          cd 9flake
+          nix run '.#setup-vm-cwfs-amd64'
+          echo 'sysupdate && cd / && . /sys/lib/rootstub && @{for(i in (6a 6l 6c)){cd /sys/src/cmd/$i && mk install && mk clean} } && cd /sys/src && mk nuke && mk install && mk test && cd /sys/src/9/pc64 && mk install && echo PASSPASSPASS' | nix run '.#run-vm-cwfs-amd64' -- -nogui | tee run.log
+          grep PASSPASSPASS run.log || exit 'failed'
